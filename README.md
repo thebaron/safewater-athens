@@ -14,9 +14,10 @@ Authors: Baron Chandler <baron@baronchandler.com>
 1. Install Vagrant
 2. Install Virtual Box 
 3. cd to the root level of the repo, where Vagrantfile is 
-4. type _vagrant up_ to build a running system in a self-contained virtual machine
-5. Edit /etc/hosts to point 127.0.0.1 to safewater.local host
-6. Browse to http://safewater.local:8080/
+4. don't forget to update the submodules for chef provisioning: git submodule update --init --recursive
+5. type _vagrant up_ to build a running system in a self-contained virtual machine
+6. Edit /etc/hosts to point 127.0.0.1 to safewater.local host
+7. Browse to http://safewater.local:8080/
 
 to see the SafeWater Athens main page.
 
