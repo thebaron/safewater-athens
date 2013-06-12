@@ -1,0 +1,54 @@
+[submodule "provisioning/cookbooks/apt"]
+	path = provisioning/cookbooks/apt
+	url = https://github.com/opscode-cookbooks/apt
+[submodule "provisioning/cookbooks/group"]
+	path = provisioning/cookbooks/group
+	url = https://github.com/bbg-cookbooks/chef-group
+[submodule "provisioning/cookbooks/python"]
+	path = provisioning/cookbooks/python
+	url = https://github.com/opscode-cookbooks/application_python.git
+[submodule "provisioning/cookbooks/ubuntu"]
+	path = provisioning/cookbooks/ubuntu
+	url = https://github.com/opscode-cookbooks/ubuntu.git
+[submodule "provisioning/cookbooks/application"]
+	path = provisioning/cookbooks/application
+	url = https://github.com/opscode-cookbooks/application.git
+[submodule "provisioning/cookbooks/nginx"]
+	path = provisioning/cookbooks/nginx
+	url = https://github.com/opscode-cookbooks/nginx.git
+[submodule "provisioning/cookbooks/apache2"]
+	path = provisioning/cookbooks/apache2
+	url = https://github.com/opscode-cookbooks/apache2.git
+[submodule "provisioning/cookbooks/chef-client"]
+	path = provisioning/cookbooks/chef-client
+	url = https://github.com/opscode-cookbooks/chef-client.git
+[submodule "provisioning/cookbooks/sudo"]
+	path = provisioning/cookbooks/sudo
+	url = https://github.com/opscode-cookbooks/sudo.git
+[submodule "provisioning/cookbooks/user"]
+	path = provisioning/cookbooks/user
+	url = https://github.com/fnichol/chef-user.git
+[submodule "provisioning/cookbooks/mysql"]
+	path = provisioning/cookbooks/mysql
+	url = https://github.com/opscode-cookbooks/mysql.git
+[submodule "provisioning/cookbooks/ohai"]
+	path = provisioning/cookbooks/ohai
+	url = https://github.com/opscode-cookbooks/ohai.git
+[submodule "provisioning/cookbooks/build-essential"]
+	path = provisioning/cookbooks/build-essential
+	url = https://github.com/opscode-cookbooks/build-essential.git
+[submodule "provisioning/cookbooks/openssl"]
+	path = provisioning/cookbooks/openssl
+	url = https://github.com/opscode-cookbooks/openssl.git
+[submodule "provisioning/cookbooks/python_alt"]
+	path = provisioning/cookbooks/python_alt
+	url = https://github.com/cookbooks/python.git
+[submodule "provisioning/cookbooks/oc-python"]
+	path = provisioning/cookbooks/oc-python
+	url = https://github.com/cookbooks/oc-python.git
+[submodule "provisioning/cookbooks/vc-python"]
+	path = provisioning/cookbooks/vc-python
+	url = git@github.com:thebaron/vc-python.git
+[submodule "provisioning/cookbooks/database"]
+	path = provisioning/cookbooks/database
+	url = https://github.com/opscode-cookbooks/database.git

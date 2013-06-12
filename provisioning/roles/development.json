@@ -1,0 +1,14 @@
+{
+  "name" : "development",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+
+  "description" : "Development server",
+
+  "run_list" : [
+    "recipe[build-essential]"
+  ],
+
+  "default_attributes" : {
+  }
+}

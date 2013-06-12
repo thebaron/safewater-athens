@@ -1,0 +1,28 @@
+{
+  "name" : "safewater-app",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+
+  "description" : "SafeWater Athens: Application server",
+
+  "run_list" : [
+    "role[mysql]",
+
+    "recipe[user::data_bag]",
+    "recipe[vc-python]",
+    "recipe[safewater]"
+  ],
+
+  "default_attributes" : {
+    "users" : [ "water" ],
+    "groups" : [ "developers", "safewater" ],
+    "safewater" : {
+        "virtual_hostname" : "safewater.thebaron.org",
+        "mysql" : {
+            "user" : "safewater",
+            "password" : "nocrypt0",
+            "database" : "safewater"
+        }
+    }
+  }
+}

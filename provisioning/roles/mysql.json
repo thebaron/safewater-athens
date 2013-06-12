@@ -1,0 +1,35 @@
+{
+  "name" : "mysql",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+
+  "description" : "MySQL Role",
+
+  "run_list" : [
+    "recipe[mysql::client]",
+    "recipe[mysql::server]",
+    "recipe[database::mysql]"
+  ],
+
+  "default_attributes" : {
+    "mysql" : {
+        "client" : {
+            "packages" : [ "mysql-client",
+                           "libmysqlclient-dev",
+                           "python-mysqldb" ],
+            "version" : "5.5"
+        },
+        "server" : {
+            "packages": [ "mysql-server" ],
+            "version" : "5.5"
+        },
+        "remove_anonymous_users" : "True",
+        "remove_test_database" : "True",
+        "server_root_password" : "changeme",
+        "server_repl_password" : "changeme",
+        "server_debian_password" : "changeme"
+    }
+  }
+}
+
+

@@ -1,0 +1,17 @@
+{
+  "name" : "development",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+
+  "description" : "Development server",
+
+  "run_list" : [
+    "recipe[safewater::ubuntu]",
+    "recipe[apt]",
+    "recipe[user::data_bag]"
+  ],
+
+  "default_attributes" : {
+      "users" : [ "vagrant", "water" ]
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "name" : "safewater-dev",
+  "chef_type": "role",
+  "json_class": "Chef::Role",
+
+  "description" : "SafeWater Athens Development Server",
+
+  "run_list" : [
+    "role[development]",
+    "role[safewater]"
+  ],
+
+  "default_attributes" : {
+    "safewater" : {
+        "virtual_hostname" : "safewater.local"
+    }
+  }
+}

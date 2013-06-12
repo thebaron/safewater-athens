@@ -1,0 +1,5 @@
+{
+  "id"        : "developers",
+  "gid"       : "5000",
+  "members"   : ["vagrant"]
+}
