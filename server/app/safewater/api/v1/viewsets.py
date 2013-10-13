@@ -9,7 +9,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 from rest_framework.permissions import AllowAny
 
-from safewater.api.renderers import HALJSONRenderer
+from safewater.api.renderers import HALJSONRenderer, PDFRenderer
 from safewater.models import PublicWaterSource, Report
 
 # Django Models
@@ -65,7 +65,6 @@ class PublicWaterSourcesViewSet(viewsets.ModelViewSet):
         return Response(pws_list)
 
 
-
 class ReportSerializer(ModelSerializer):
     class Meta:
         model = Report
@@ -74,8 +73,8 @@ class ReportSerializer(ModelSerializer):
 class ReportViewSet(viewsets.ModelViewSet):
     model = Report
     permission_classes = (AllowAny,)
-    renderer_classes = (BrowsableAPIRenderer, JSONRenderer, )
-    lookup_fields = ('id')
+    renderer_classes = (BrowsableAPIRenderer, JSONRenderer, PDFRenderer, )
+    lookup_fields = ('id', 'pk')
 
     def get_object(self):
         queryset = self.get_queryset()

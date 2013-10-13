@@ -10,7 +10,7 @@ end
 
 # install packages we need for safewater athens
 
-%w{libapache2-mod-wsgi libapache2-mod-php5 supervisor python-dev}.each do |pkg|
+%w{libapache2-mod-wsgi libapache2-mod-php5 supervisor python-dev redis-server}.each do |pkg|
   package pkg
 end
 
@@ -38,6 +38,14 @@ apache_module "wsgi" do
    enable true
 end
 
+apache_module "proxy" do
+   enable true
+end
+
+apache_module "proxy_http" do
+   enable true
+end
+
 apache_module "php5" do
     filename "libphp5.so"
 end
@@ -45,6 +53,19 @@ end
 apache_site "safewater-athens" do
     enable true
 end
+
+
+template "/etc/supervisor/conf.d/safewater.conf" do
+  source "etc_supervisord.conf.erb"
+  variables(
+    :supervisord_bin => '/opt/water/var/bin/supervisord',
+    :supervisord_conf => '/opt/water/app/supervisord.conf'
+  )
+  owner "root"
+  group "root"
+  mode 0600
+end
+
 
 web_app "safewater-athens" do
     server_name node['safewater']['virtual_hostname']
@@ -124,6 +145,13 @@ bash "restart apache" do
   code "service apache2 reload"
 end
 
+# Restart supervisord
+
+bash "restart supervisord" do
+  user "root"
+  cwd "/tmp"
+  code "service supervisor restart"
+end
 
 
 # vvvv from examples vvvv

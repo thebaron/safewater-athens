@@ -1,5 +1,7 @@
 # Django settings for safewater project.
 
+USE_X_FORWARDED_HOST = True
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -159,6 +161,9 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
 
+    'djcelery',
+
+
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
@@ -223,9 +228,28 @@ SOCIALACCOUNT_PROVIDERS = \
         },
     }
 
+BROKER_URL = 'redis://'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+CELERY_RESULT_BACKEND = 'redis://'
+
+CELERY_ROUTES = {
+                  "app.tasks.monitor_twitter": {"queue": "twitter"},
+                  "app.tasks.import_violations":  {"queue" : "swdis"},
+                  "app.tasks.import_pws" : {"queue":"swdis"}
+                }
 
 
+TWITTER_APP_KEY = 'ckZl3qrMckgFEHMrHHO1DQ'
+TWITTER_APP_SECRET = 'rpEGs0mPGYnA79MdCTMmCr2dAS38SEMeCW2yM3o3E'
 
+
+import djcelery
+djcelery.setup_loader()
+
+
+SWDIS_PWS_COUNTIES = ('OCONEE', 'CLARKE')
+SWDIS_COUNTY_SERVED = 'http://iaspub.epa.gov/enviro/efservice/SDW_COUNTY_SERVED/STATE/GA/COUNTYSERVED/%s/JSON'
+SWDIS_VIOLATIONS = 'http://iaspub.epa.gov/enviro/efservice/SDW_VIOL_ENFORCEMENT/COUNTYSERVED/%s/STATE/GA/COMPPERBEGINDATE/%%3E/31-DEC-2009/JSON'
 
 try:
     from local_settings import *

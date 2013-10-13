@@ -1,0 +1,14 @@
+[program:safewater-supervisor]
+command=/opt/water/var/bin/supervisord -c /opt/water/app/supervisord.conf -n
+numprocs=1
+directory=/tmp
+umask=022
+priority=999
+autostart=true
+autorestart=true
+startsecs=10
+startretries=3
+exitcodes=0,2
+stopsignal=TERM
+stopwaitsecs=10
+user=vagrant

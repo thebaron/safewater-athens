@@ -5,12 +5,12 @@ Vagrant.configure("2") do |config|
   config.vm.box = "quantal-server"
   config.vm.box_url = "http://static.aldoborrero.com/vagrant/quantal64.box"
   config.vm.network :forwarded_port, guest: 80, host: 8080
-  config.vm.synced_folder "server", "/opt/water"
+  config.vm.synced_folder "server/app", "/opt/water/app"
 
   config.vm.provider :virtualbox do |vb|
     vb.customize ["modifyvm", :id, "--memory", "1536"]
   end
-  
+
   config.vm.provision :chef_solo do |chef|
     chef.cookbooks_path = "./provisioning/cookbooks"
     chef.roles_path = "./provisioning/roles"
