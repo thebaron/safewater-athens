@@ -1,6 +1,6 @@
 [submodule "provisioning/cookbooks/apt"]
 	path = provisioning/cookbooks/apt
-	url = https://github.com/opscode-cookbooks/apt
+	url = git@github.com:thebaron/vc-apt.git
 [submodule "provisioning/cookbooks/group"]
 	path = provisioning/cookbooks/group
 	url = https://github.com/bbg-cookbooks/chef-group

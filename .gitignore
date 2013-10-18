@@ -1,3 +1,4 @@
 server/var/**
-*.pyc
+**/*.pyc
 .vagrant
+**/*.DS_Store
