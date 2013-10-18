@@ -36,7 +36,7 @@ end
 bash "remount /opt/water/app" do
   user "root"
   cwd "/tmp"
-  code "mount -o remount,uid=1000,gid=1002,dmode=775,fmode=775 /opt/water/app"
+  code "mount -o remount,uid=1000,gid=1002,dmode=0775,fmode=0775 /opt/water/app"
 end
 
 # set up apache
