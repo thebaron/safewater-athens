@@ -79,8 +79,8 @@ template "/etc/apache2/sites-available/safewater-athens.conf" do
     source "web_app.conf-gunicorn.erb"
     variables(
       :server_name => node['safewater']['virtual_hostname'],
-      :server_aliases => ['athens.' + node['safewater']['virtual_hostname']],
-      :node => node,
+      :server_aliases => [],
+      :logdir => node['apache']['log_dir'],
       :name => 'safewater',
       :docroot => '/opt/water/app/site/',
     )
