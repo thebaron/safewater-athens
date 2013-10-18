@@ -1,2 +1,0 @@
-
-import chromelogger as console

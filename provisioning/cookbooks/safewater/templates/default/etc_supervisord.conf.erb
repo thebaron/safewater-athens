@@ -1,5 +1,5 @@
 [program:safewater-supervisor]
-command=/opt/water/var/bin/supervisord -c /opt/water/app/supervisord.conf -n
+command=<%= @supervisord_bin %> -c <%= @supervisord_conf %> -n
 numprocs=1
 directory=/tmp
 umask=022
@@ -11,4 +11,4 @@ startretries=3
 exitcodes=0,2
 stopsignal=TERM
 stopwaitsecs=10
-user=vagrant
+user=water

@@ -26,10 +26,12 @@ class Swdis:
     """
 
     _log = '\n'
+    stdout_log = False
 
     def log(self, msg):
         self._log = self._log + msg + '\n'
-        # print msg
+        if self.stdout_log:
+            print msg
 
     def get_log(self):
         return self._log

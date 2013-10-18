@@ -10,26 +10,33 @@ end
 
 # install packages we need for safewater athens
 
-%w{libapache2-mod-wsgi libapache2-mod-php5 supervisor python-dev redis-server}.each do |pkg|
+%w{libapache2-mod-wsgi libapache2-mod-php5 supervisor python-dev redis-server graphicsmagick-imagemagick-compat}.each do |pkg|
   package pkg
 end
 
 # set up files
 
 directory "/opt/water" do
-  owner "water"
-  group "water"
-  mode 0775
+  owner "vagrant"
+  group "developers"
+  mode 02775
   action :create
 end
 
-%w{var data}.each do |dir|
+%w{var data var/tmp var/run var/log}.each do |dir|
   directory "/opt/water/#{dir}" do
-    owner "water"
-    group "water"
-    mode 0775
+    owner "vagrant"
+    group "developers"
+    mode 02775
     action :create
   end
+end
+
+# Change the owner of the water mount
+bash "remount /opt/water/app" do
+  user "root"
+  cwd "/tmp"
+  code "mount -o remount,uid=1000,gid=1002,dmode=775,fmode=775 /opt/water/app"
 end
 
 # set up apache
@@ -66,12 +73,27 @@ template "/etc/supervisor/conf.d/safewater.conf" do
   mode 0600
 end
 
+# set up the apache config
 
-web_app "safewater-athens" do
-    server_name node['safewater']['virtual_hostname']
-    server_aliases ['athens.' + node['safewater']['virtual_hostname']]
-    docroot "/opt/water/app/site/"
+template "/etc/apache2/sites-available/safewater-athens.conf" do
+    source "web_app.conf-gunicorn.erb"
+    variables(
+      :server_name => node['safewater']['virtual_hostname'],
+      :server_aliases => ['athens.' + node['safewater']['virtual_hostname']],
+      :node => node,
+      :name => 'safewater',
+      :docroot => '/opt/water/app/site/',
+    )
 end
+
+# and activate it
+
+link "/etc/apache2/sites-enabled/safewater-athens.conf" do
+  link_type :symbolic
+  target_file "/etc/apache2/sites-available/safewater-athens.conf"
+  action :create
+end
+
 
 # allow apparmor to allow mysql to run out of the /opt/water/data/mysql dir
 
@@ -87,8 +109,8 @@ end
 # setup python env
 
 vc_python_virtualenv "/opt/water/var" do
-    owner "water"
-    group "water"
+    owner "vagrant"
+    group "developers"
     interpreter "python2.7"
     action :create
 end
@@ -150,7 +172,7 @@ end
 bash "restart supervisord" do
   user "root"
   cwd "/tmp"
-  code "service supervisor restart"
+  code "service supervisor stop; service supervisor start"
 end
 
 

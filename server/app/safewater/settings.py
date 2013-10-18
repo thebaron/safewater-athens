@@ -132,7 +132,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
     'allauth.account.context_processors.account',
     'allauth.socialaccount.context_processors.socialaccount',
-    'safewater',
 )
 
 
@@ -201,12 +200,13 @@ LOGGING = {
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny'
+        'rest_framework.permissions.AllowAny',
         ],
     'DEFAULT_MODEL_SERIALIZER_CLASS':
         'rest_framework.serializers.HyperlinkedModelSerializer',
     'FILTER_BACKENDS': [
-        'rest_framework.filters.DjangoFilterBackend'],
+        'rest_framework.filters.DjangoFilterBackend',
+        ],
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
@@ -217,7 +217,7 @@ REST_FRAMEWORK = {
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
-    "allauth.account.auth_backends.AuthenticationBackend",
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 SOCIALACCOUNT_PROVIDERS = \
