@@ -89,9 +89,7 @@ end
 # and activate it
 
 link "/etc/apache2/sites-enabled/safewater-athens.conf" do
-  link_type :symbolic
-  target_file "/etc/apache2/sites-available/safewater-athens.conf"
-  action :create
+  to "/etc/apache2/sites-available/safewater-athens.conf"
 end
 
 
