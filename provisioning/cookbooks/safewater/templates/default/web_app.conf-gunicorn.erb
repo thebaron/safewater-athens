@@ -1,19 +1,19 @@
 <VirtualHost *:80>
-  ServerName <%= @params[:server_name] %>
-  ServerAlias <% @params[:server_aliases].each do |a| %><%= a %> <% end %>
-  DocumentRoot <%= @params[:docroot] %>
+  ServerName <%= @server_name %>
+  ServerAlias <% @server_aliases.each do |a| %><%= a %> <% end %>
+  DocumentRoot <%= @docroot %>
   RewriteEngine On
 
   DirectoryIndex index.php
 
-  Alias /media/  <%= @params[:docroot] %>/assets/
-  Alias /assets/ <%= @params[:docroot] %>/assets/
-  Alias /images/ <%= @params[:docroot] %>/images/
-  Alias /django-assets/ <%= @params[:docroot] %>/django-assets/
-  Alias /index.php <%= @params[:docroot] %>/index.php
-  Alias /squeal.php <%= @params[:docroot] %>/squeal.php
+  Alias /media/  <%= @docroot %>/assets/
+  Alias /assets/ <%= @docroot %>/assets/
+  Alias /images/ <%= @docroot %>/images/
+  Alias /django-assets/ <%= @docroot %>/django-assets/
+  Alias /index.php <%= @docroot %>/index.php
+  Alias /squeal.php <%= @docroot %>/squeal.php
 
-  <Directory <%= @params[:docroot] %>/assets>
+  <Directory <%= @docroot %>/assets>
     Options Indexes
   </Directory>
 
@@ -25,12 +25,12 @@
   ProxyPass /squeal.php !
 
   ProxyPass / http://127.0.0.1:8000/
-  ProxyPassReverse / http://<%= @params[:server_name] %>:8000/
+  ProxyPassReverse / http://<%= @server_name %>:8000/
 
 
   LogLevel info
-  ErrorLog <%= node['apache']['log_dir'] %>/<%= @params[:name] %>-error.log
-  CustomLog <%= node['apache']['log_dir'] %>/<%= @params[:name] %>-access.log combined
+  ErrorLog <%= @logdir %>/<%= @name %>-error.log
+  CustomLog <%= @logdir %>/<%= @name %>-access.log combined
 
 
 </VirtualHost>
