@@ -53,6 +53,10 @@ apache_module "proxy_http" do
    enable true
 end
 
+apache_module "rewrite" do
+   enable true
+end
+
 apache_module "php5" do
     filename "libphp5.so"
 end
