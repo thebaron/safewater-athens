@@ -9,13 +9,20 @@ from optparse import make_option
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from safewater.models import PublicWaterSource, Report
+from safewater.models import PublicWaterSource, Report, Action
 from safewater.constants import (
     SOURCE_EPA,
+
     REPORT_TYPE_VIOLATION,
+    REPORT_STATUS_OPEN,
     REPORT_STATUS_RESOLVED,
     REPORT_VERIFICATION_VERIFIED,
-    SEVERITY_UNSPECIFIED
+
+    SEVERITY_UNSPECIFIED,
+
+    ACTION_ENTITY_EPA,
+    ACTION_TYPE_ENFORCEMENT,
+    ACTION_STATUS_COMPLETE,
 )
 
 
@@ -131,6 +138,9 @@ class Swdis:
             Suck in the violations from the EPA
         """
 
+        newViolations = 0
+        newActions = 0
+
         for county in { item['county'] for item in PublicWaterSource.objects.values('county') }:
 
             self.log('Fetching violations for %s county...' % (county))
@@ -150,6 +160,7 @@ class Swdis:
                 newViolations = 0
 
                 for row in response_json:
+
                     self.log('    > %s-%s' % (row.get('VNAME', 'Unknown )violation'), row.get('COMPPERBEGINDATE', '')))
 
                     pws = PublicWaterSource.objects.get(pwsid=row.get('PWSID'))
@@ -161,20 +172,54 @@ class Swdis:
                         summary = row.get('VNAME', 'Unknown violation'),
                         date_reported = self.convert_date(row.get('COMPPERBEGINDATE', '')),
                         date_resolved = self.convert_date(row.get('COMPPERENDDATE', '')),
-                        status = REPORT_STATUS_RESOLVED,
+                        status = REPORT_STATUS_OPEN,
                         verification = REPORT_VERIFICATION_VERIFIED,
                         severity = SEVERITY_UNSPECIFIED,
                         description = 'Sources: %s\n\nDefinition: %s\n\nHealth Effects: %s' % (row.get('SOURCES', 'Unspecified'), row.get('DEFINITION', 'Unspecified'), row.get('HEALTH_EFFECTS', 'Unspecified')),
                         pws_affected = pws,
-                        contaminant_name = row.get('CNAME', ''),
-                        contaminant_type = row.get('CTYPE', ''),
-                        violation_type = row.get('VTYPE', ''),
+                        contaminant_name = row.get('CNAME', '').strip(),
+                        contaminant_type = row.get('CTYPE', '').strip(),
+                        violation_type = row.get('VTYPE', '').strip(),
                     )
                     if created:
                         newViolations = newViolations + 1
 
+                    action, created = Action.objects.get_or_create(
+                        source = SOURCE_EPA,
+                        source_uri = url,
+
+                        summary = row.get('ENFACTIONNAME', '').strip(),
+                        status = ACTION_STATUS_COMPLETE,
+                        date_taken = self.convert_date(row.get('ENFDATE', '')),
+
+                        entity = ACTION_ENTITY_EPA,
+                        action_type = ACTION_TYPE_ENFORCEMENT,
+                        action_subtype = row.get('ENFACTIONTYPE', '').strip(),
+
+                        report = report
+                        )
+
+                    if created:
+                        newActions = newActions + 1
+
+                    # per the quick start doc, enf action types of
+                    # FOX, EOX, and SOX indicate the compliance was
+                    # achieved.
+                    #
+                    # We can then say the report was "resolved."
+                    #
+                    if (action.action_subtype == 'EOX' or
+                        action.action_subtype == 'FOX' or
+                        action.action_subtype == 'SOX'):
+                        report.status = REPORT_STATUS_RESOLVED
+                        report.save()
+
+
                 if (newViolations > 0):
                     self.log('%d new violations recorded.' % (newViolations))
+                if (newActions > 0):
+                    self.log('%d new actions recorded.' % (newActions))
+
             else:
                 self.log(' FAIL (status %d)' % (req.status_code))
 

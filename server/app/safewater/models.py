@@ -6,7 +6,10 @@ from safewater.constants import (
     REPORT_TYPE_CHOICES,
     REPORT_STATUS_CHOICES,
     SEVERITY_CHOICES,
-    REPORT_VERIFICIATION_CHOICES
+    REPORT_VERIFICIATION_CHOICES,
+    ACTION_ENTITY_CHOICES,
+    ACTION_TYPE_CHOICES,
+    ACTION_STATUS_CHOICES,
 )
 
 
@@ -39,8 +42,10 @@ class PublicWaterSource(models.Model):
     contact_state = models.CharField(max_length=2, null=True)
     contact_zip = models.CharField(max_length=14, null=True)
 
-    last_updated = models.DateTimeField(auto_now_add=True)
     population_served = models.IntegerField(null=True, default=0)
+
+    date_created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return '(%s) %s' % (
@@ -49,6 +54,10 @@ class PublicWaterSource(models.Model):
         )
 
 class Report(models.Model):
+    """
+    Models a report about a given public water system.
+    """
+
     source = models.CharField(max_length=16, null=True, choices=SOURCE_CHOICES)
     source_uri = models.CharField(max_length=255)
     report_type = models.CharField(max_length=16, null=True, choices=REPORT_TYPE_CHOICES)
@@ -69,9 +78,45 @@ class Report(models.Model):
     contaminant_type = models.CharField(max_length=40, null=True)
     violation_type   = models.CharField(max_length=40, null=True)
 
+    date_created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
     def __unicode__(self):
         return '%s REPORT - %s\n    affects PWSID %s' % (
             self.source,
             self.summary,
             self.pws_affected.pwsid
+        )
+
+class Action(models.Model):
+    """
+    Models a set of actions taken as a result of a report.
+    """
+
+    class Meta:
+        unique_together = (("entity", "action_type", "action_subtype", "report"),)
+
+    source = models.CharField(max_length=16, null=True, choices=SOURCE_CHOICES)
+    source_uri = models.CharField(max_length=255)
+
+    summary = models.CharField(max_length=255, null=True)
+    status = models.CharField(max_length=16, choices=ACTION_STATUS_CHOICES)
+    date_taken = models.DateField(null=True)
+    log = models.CharField(max_length=1024, blank=True, null=True)
+
+    entity = models.CharField(max_length=32, null=True, choices=ACTION_ENTITY_CHOICES)
+    action_type = models.CharField(max_length=16, null=True, choices=ACTION_TYPE_CHOICES)
+    action_subtype = models.CharField(max_length=32, null=True)
+
+    date_created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    report = models.ForeignKey('Report')
+
+    def __unicode__(self):
+        return '%s ACTION - %s\n    against report (%d) %s' % (
+            self.source,
+            self.summary,
+            self.report.id,
+            self.report.summary
         )

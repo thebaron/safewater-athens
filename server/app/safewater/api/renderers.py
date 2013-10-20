@@ -21,13 +21,12 @@ class HALJSONRenderer(renderers.JSONRenderer):
     media_type = 'application/json'
     format = 'json'
 
-
     def render(self, data, accepted_media_type=None, renderer_context=None):
         """
         Render `obj` into HAL-embellished JSON.
         """
+        hal = { 'data' : data }
 
-        hal = data.copy()
         renderer_context = renderer_context or {}
         hal['_links'] = renderer_context.get('links', {})
         hal['_embedded'] = renderer_context.get('embedded', {})
@@ -48,13 +47,13 @@ class PDFRenderer(renderers.BaseRenderer):
         Render an object into a PDF document.
         """
 
-        from safewater.api.v1.viewsets import ReportViewSet
+        from safewater.api.v1.viewsets import PublicWaterSourceViewSet
 
         tmpPDF = tempfile.NamedTemporaryFile(delete=False, suffix='.pdf')
         pdf = canvas.Canvas(tmpPDF)
 
-        if (isinstance(renderer_context.get('view', None), ReportViewSet)):
-            self.doReportPDF(pdf, data, renderer_context)
+        if (isinstance(renderer_context.get('view', None), PublicWaterSourceViewSet)):
+            self.doPWSPDF(pdf, data, renderer_context)
         else:
             pdf.drawString(100, 100, 'This report is not available in PDF format!')
             pdf.showPage()
@@ -63,7 +62,7 @@ class PDFRenderer(renderers.BaseRenderer):
         tmpPDF.seek(0)
         return tmpPDF.read()
 
-    def doReportPDF(self, pdf, data, context):
+    def doPWSPDF(self, pdf, data, context):
 
         pageSize = 11.0*inch
 
@@ -75,12 +74,13 @@ class PDFRenderer(renderers.BaseRenderer):
         drawing = Image(logo_path, 2.68*inch*0.66, 1.0*inch*0.66)
         drawing.drawOn(pdf, 0.75*inch, pageSize-1.0*inch)
 
-        lipsum = render_to_string('violations_letter.tmpl', data)
-        lipsum = lipsum.replace('\n', '<br></br>')
+        letter_text = render_to_string('violations_letter.tmpl', data)
+        letter_text = letter_text.replace('\n', '<br></br>')
 
-        letterStyle = ParagraphStyle(name="LetterText", fontName="Courier")
+        letter_style = ParagraphStyle(name="letter_text",
+                                      fontName="Courier")
 
-        letter = Paragraph(lipsum, letterStyle)
+        letter = Paragraph(letter_text, letter_style)
 
         aw = 5.5*inch
         ah = 8.5*inch
@@ -104,16 +104,15 @@ class PDFRenderer(renderers.BaseRenderer):
 
         header_text = "<para align=center><b>SAFEWATER ATHENS - VIOLATIONS REPORT</b><br></br>Prepared for %s on %s<p></p></para>"
 
-        header_text = header_text % (data.get('pws_affected').get('name'), 'March 15, 2013')
+        header_text = header_text % (data.get('name'), 'March 15, 2013')
         header = Paragraph(header_text, headerStyle)
         w, h = header.wrap(textWidth, textHeight)
         topLine = topLine - h
         header.drawOn(pdf, (8.5*inch - w) / 2.0, topLine)
 
-
         topLine = topLine - 0.5 * inch
 
-        vios = render_to_string('violations_listing.tmpl', context)
+        vios = render_to_string('violations_listing.tmpl', data)
         vios = vios.replace('\n', '<br></br>')
 
         letterStyle = ParagraphStyle(name="LetterText", fontName="Courier")

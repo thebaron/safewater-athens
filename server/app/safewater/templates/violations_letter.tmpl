@@ -1,11 +1,11 @@
 {% load filters %}
-{{pws_affected.contact_name | title | fix_last_first}}
-{{pws_affected.contact_address | title }}
-{{pws_affected.contact_city | title}}, {{pws_affected.contact_state | upper}}  {{pws_affected.contact_zip}}
+{{contact_name | title | fix_last_first}}
+{{contact_address | title }}
+{{contact_city | title}}, {{contact_state | upper}}  {{contact_zip}}
 
-Dear {{pws_affected.contact_name | title | fix_last_first | first_name }}:
+Dear {{contact_name | title | fix_last_first | first_name }}:
 
-<b>VIOLATION REPORT FOR {{pws_affected.name}}</b>
+<b>VIOLATION REPORT FOR {{name}}</b>
 
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem
 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae

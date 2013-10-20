@@ -1,4 +1,11 @@
 
 The EPA has reported the following violations for your public water supply:
 
-{% for k, v in data.items %}<b>{{k}}</b>{{v}}<br></br>{% endfor %}
+<seqreset id='report'>
+
+{% for report in report_set %}
+<seq id='report'/> - <b>{{report.summary}}</b>, {{report.status}}<br></br>
+    {{report.description}}
+<p/>
+{% endfor %}
+
