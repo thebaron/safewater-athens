@@ -2,8 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "quantal-server"
-  config.vm.box_url = "http://static.aldoborrero.com/vagrant/quantal64.box"
+  config.vm.box = "quantal-server-roderik"
+  config.vm.box_url = "https://github.com/downloads/roderik/VagrantQuantal64Box/quantal64.box"
   config.vm.network :forwarded_port, guest: 80, host: 8080
   config.vm.synced_folder "server/app", "/opt/water/app"
 

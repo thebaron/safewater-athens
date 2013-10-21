@@ -16,7 +16,9 @@
         "client" : {
             "packages" : [ "mysql-client",
                            "libmysqlclient-dev",
-                           "python-mysqldb" ],
+                           "python-mysqldb",
+                           "ruby-dev",
+                           "ruby1.9.1-dev" ],
             "version" : "5.5"
         },
         "server" : {
