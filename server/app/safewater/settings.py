@@ -253,6 +253,9 @@ SWDIS_PWS_COUNTIES = ('OCONEE', 'CLARKE')
 SWDIS_COUNTY_SERVED = 'http://iaspub.epa.gov/enviro/efservice/SDW_COUNTY_SERVED/STATE/GA/COUNTYSERVED/%s/JSON'
 SWDIS_VIOLATIONS = 'http://iaspub.epa.gov/enviro/efservice/SDW_VIOL_ENFORCEMENT/COUNTYSERVED/%s/STATE/GA/COMPPERBEGINDATE/%%3E/31-DEC-2009/JSON'
 
+
+LETTER_URL = 'http://safewater.local:8080/'
+
 try:
     from local_settings import *
 except:

@@ -64,7 +64,7 @@ class PDFRenderer(renderers.BaseRenderer):
 
     def doPWSPDF(self, pdf, data, context):
 
-        pageSize = 11.0*inch
+        page_size = 11.0*inch
 
         ###
         ### PAGE 1 - the Letter
@@ -72,13 +72,16 @@ class PDFRenderer(renderers.BaseRenderer):
 
         logo_path = settings.STATIC_ROOT + 'reports/logo.png'
         drawing = Image(logo_path, 2.68*inch*0.66, 1.0*inch*0.66)
-        drawing.drawOn(pdf, 0.75*inch, pageSize-1.0*inch)
+        drawing.drawOn(pdf, 0.75*inch, page_size-1.0*inch)
+
+        letter_style = ParagraphStyle(name="letter_text",
+                                      fontName="Courier")
+
+        data['letter_url'] = settings.LETTER_URL
 
         letter_text = render_to_string('violations_letter.tmpl', data)
         letter_text = letter_text.replace('\n', '<br></br>')
 
-        letter_style = ParagraphStyle(name="letter_text",
-                                      fontName="Courier")
 
         letter = Paragraph(letter_text, letter_style)
 
@@ -86,7 +89,7 @@ class PDFRenderer(renderers.BaseRenderer):
         ah = 8.5*inch
         w,h = letter.wrap(aw, ah)
         if (w <= aw) and (h <= ah):
-            letter.drawOn(pdf, 1.5*inch, (pageSize-h+2.0*inch)/2.0)
+            letter.drawOn(pdf, 1.5*inch, (page_size-h+2.0*inch)/2.0)
         else:
             pdf.drawString(1.5*inch, 5.0*inch, 'Could not render the letter because the page is too small.')
 
@@ -96,32 +99,53 @@ class PDFRenderer(renderers.BaseRenderer):
         ### PAGE 2 - The Violation Report
         ###
 
-        textWidth = 6.5*inch
-        textHeight = 9.0*inch
-        topLine = pageSize - 1.0*inch # 1 inch margin at top
+        text_width = 6.5*inch
+        text_height = 9.0*inch
+        top_line = page_size - 1.0*inch # 1 inch margin at top
 
-        headerStyle = ParagraphStyle(name="HeaderText", fontName="Times-Roman")
+        header_style = ParagraphStyle(name="header_text",
+                                      fontName="Times-Roman")
 
         header_text = "<para align=center><b>SAFEWATER ATHENS - VIOLATIONS REPORT</b><br></br>Prepared for %s on %s<p></p></para>"
 
+        ## FIXME date --vvvv
         header_text = header_text % (data.get('name'), 'March 15, 2013')
-        header = Paragraph(header_text, headerStyle)
-        w, h = header.wrap(textWidth, textHeight)
-        topLine = topLine - h
-        header.drawOn(pdf, (8.5*inch - w) / 2.0, topLine)
+        header = Paragraph(header_text, header_style)
+        w, h = header.wrap(text_width, text_height)
+        top_line = top_line - h
+        header.drawOn(pdf, (8.5*inch - w) / 2.0, top_line)
+        top_line = top_line - 0.5 * inch
 
-        topLine = topLine - 0.5 * inch
+        vio_style = ParagraphStyle(name='violation_text', fontName="Courier")
 
-        vios = render_to_string('violations_listing.tmpl', data)
-        vios = vios.replace('\n', '<br></br>')
+        vio_intro_text = "The EPA has reported the following violations for your public water supply:<br></br><br></br><seqreset id='report'>"
+        vio_intro = Paragraph(vio_intro_text, vio_style)
+        w, h = vio_intro.wrap(text_width, text_height)
+        top_line = top_line - h
+        vio_intro.drawOn(pdf, (8.5*inch - w) / 2.0, top_line)
+        top_line = top_line - 0.5 * inch
 
-        letterStyle = ParagraphStyle(name="LetterText", fontName="Courier")
+        for report in data.get('reports', []):
 
-        letter = Paragraph(vios, letterStyle)
+            vio_text = render_to_string('violations_listing.tmpl', report)
+            vio_text = vio_text.replace('\n', '<br></br>')
 
-        w, h = letter.wrap(aw, ah)
-        topLine = topLine - h
-        letter.drawOn(pdf, 1.0*inch, topLine)
+            vio = Paragraph(vio_text, vio_style)
+
+            vio_width, vio_height = vio.wrap(aw, ah)
+            top_line = top_line - vio_height
+
+            # If it won't fit on the page, then put it on the next one
+            #
+            if top_line < 1.0:
+                pdf.showPage()
+                top_line = page_size - 1.0*inch # 1 inch margin at top
+                w, h = header.wrap(text_width, text_height)
+                top_line = top_line - h
+                header.drawOn(pdf, (8.5*inch - w) / 2.0, top_line)
+                top_line = top_line - 0.5 * inch - vio_height
+
+            vio.drawOn(pdf, 1.0*inch, top_line)
 
         pdf.showPage()
 
