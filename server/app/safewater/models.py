@@ -96,6 +96,7 @@ class Action(models.Model):
     class Meta:
         # -- put this back later
 	# unique_together = (("entity", "action_type", "action_subtype", "report"),)
+	pass
 
     source = models.CharField(max_length=16, null=True, choices=SOURCE_CHOICES)
     source_uri = models.CharField(max_length=255)
