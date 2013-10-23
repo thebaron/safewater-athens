@@ -94,7 +94,8 @@ class Action(models.Model):
     """
 
     class Meta:
-        unique_together = (("entity", "action_type", "action_subtype", "report"),)
+        # -- put this back later
+	# unique_together = (("entity", "action_type", "action_subtype", "report"),)
 
     source = models.CharField(max_length=16, null=True, choices=SOURCE_CHOICES)
     source_uri = models.CharField(max_length=255)
