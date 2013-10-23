@@ -23,7 +23,7 @@ directory "/opt/water" do
   action :create
 end
 
-%w{var data var/tmp var/run var/log}.each do |dir|
+%w{var data var/tmp var/run var/log var/bin}.each do |dir|
   directory "/opt/water/#{dir}" do
     owner "vagrant"
     group "developers"
